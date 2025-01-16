@@ -52,7 +52,7 @@ bool QMicroz::setZipFile(const QString &zip_path)
         }
     }
 
-    qWarning() << "Wrong path:" << zip_path;
+    // qWarning() << "Wrong path:" << zip_path;
     return false;
 }
 
@@ -71,7 +71,7 @@ bool QMicroz::setZipBuffer(const QByteArray &buffered_zip)
         return true;
     }
 
-    qWarning() << "Failed to open buffered zip";
+    // qWarning() << "Failed to open buffered zip";
     delete _za;
     return false;
 }
@@ -90,7 +90,7 @@ void QMicroz::setOutputFolder(const QString &output_folder)
 const QString& QMicroz::outputFolder() const
 {
     if (m_output_folder.isEmpty())
-        qWarning() << "No output folder setted";
+        // qWarning() << "No output folder setted";
 
     return m_output_folder;
 }
@@ -199,7 +199,7 @@ QDateTime QMicroz::lastModified(int index) const
 bool QMicroz::extractAll()
 {
     if (!m_archive) {
-        qDebug() << "No zip archive setted";
+        // qDebug() << "No zip archive setted";
         return false;
     }
 
@@ -210,15 +210,15 @@ bool QMicroz::extractAll()
 bool QMicroz::extractIndex(int index, bool recreate_path)
 {
     if (!m_archive) {
-        qDebug() << "No zip archive setted";
+        // qDebug() << "No zip archive setted";
         return false;
     }
 
     if (index == -1 || outputFolder().isEmpty())
         return false;
 
-    qDebug() << "Extract:" << index << "from:" << m_zip_path;
-    qDebug() << "Output folder:" << outputFolder();
+    // qDebug() << "Extract:" << index << "from:" << m_zip_path;
+    // qDebug() << "Output folder:" << outputFolder();
 
     // create output folder if it doesn't exist
     if (!tools::createFolder(outputFolder())) {
@@ -232,7 +232,7 @@ bool QMicroz::extractIndex(int index, bool recreate_path)
         return false;
     }
 
-    qDebug() << "Extracting:" << _filename;
+    // qDebug() << "Extracting:" << _filename;
     const QString _outpath = tools::joinPath(outputFolder(),
                                              recreate_path ? _filename : QFileInfo(_filename).fileName());
 
@@ -244,14 +244,14 @@ bool QMicroz::extractIndex(int index, bool recreate_path)
 
     // subfolder, no data to extract
     if (_filename.endsWith(tools::s_sep)) {
-        qDebug() << "Subfolder extracted";
+        // qDebug() << "Subfolder extracted";
     }
     // extract file
     else if (!tools::extract_to_file(static_cast<mz_zip_archive *>(m_archive), index, _outpath)) {
         return false;
     }
 
-    qDebug() << "Unzip complete.";
+    // qDebug() << "Unzip complete.";
     return true;
 }
 
@@ -265,11 +265,11 @@ BufList QMicroz::extractToBuf() const
     BufList _res;
 
     if (!m_archive) {
-        qWarning() << "No archive setted";
+        // qWarning() << "No archive setted";
         return _res;
     }
 
-    qDebug() << "Extracting to RAM:" << (m_zip_path.isEmpty() ? "buffered zip" : m_zip_path);
+    // qDebug() << "Extracting to RAM:" << (m_zip_path.isEmpty() ? "buffered zip" : m_zip_path);
 
     // extracting...
     for (int it = 0; it < count(); ++it) {
@@ -282,7 +282,7 @@ BufList QMicroz::extractToBuf() const
         if (_filename.endsWith(tools::s_sep))
             continue;
 
-        qDebug() << "Extracting:" << (it + 1) << '/' << count() << _filename;
+        // qDebug() << "Extracting:" << (it + 1) << '/' << count() << _filename;
 
         // extract file
         const QByteArray _data = extractData(it);
@@ -290,7 +290,7 @@ BufList QMicroz::extractToBuf() const
             _res[_filename] = _data;
     }
 
-    qDebug() << "Unzipped:" << _res.size() << "files";
+    // qDebug() << "Unzipped:" << _res.size() << "files";
     return _res;
 }
 
@@ -299,14 +299,14 @@ BufFile QMicroz::extractToBuf(int index) const
     BufFile _res;
 
     if (!m_archive) {
-        qWarning() << "No archive setted";
+        // qWarning() << "No archive setted";
         return _res;
     }
 
     if (index == -1)
         return _res;
 
-    qDebug() << "Extracting to RAM:" << (m_zip_path.isEmpty() ? "buffered zip" : m_zip_path);
+    // qDebug() << "Extracting to RAM:" << (m_zip_path.isEmpty() ? "buffered zip" : m_zip_path);
 
     const QString _filename = name(index);
     if (_filename.isEmpty())
@@ -314,11 +314,11 @@ BufFile QMicroz::extractToBuf(int index) const
 
     // subfolder, no data to extract
     if (_filename.endsWith(tools::s_sep)) {
-        qDebug() << "Subfolder, no data to extract:" << _filename;
+        // qDebug() << "Subfolder, no data to extract:" << _filename;
         return _res;
     }
 
-    qDebug() << "Extracting:" << _filename;
+    // qDebug() << "Extracting:" << _filename;
 
     // extract file
     const QByteArray _data = extractData(index);
@@ -328,7 +328,7 @@ BufFile QMicroz::extractToBuf(int index) const
         _res.m_data = _data;
         _res.m_modified = lastModified(index);
 
-        qDebug() << "Unzipped:" << _data.size() << "bytes";
+        // qDebug() << "Unzipped:" << _data.size() << "bytes";
     }
 
     return _res;
@@ -390,7 +390,7 @@ bool QMicroz::compress_here(const QString &path)
         return compress_folder(path);
     }
     else {
-        qDebug() << "QMicroz::compress | WRONG path:" << path;
+        // qDebug() << "QMicroz::compress | WRONG path:" << path;
         return false;
     }
 }
@@ -419,7 +419,7 @@ bool QMicroz::compress_file(const QString &source_path)
 bool QMicroz::compress_file(const QString &source_path, const QString &zip_path)
 {
     if (!QFileInfo::exists(source_path)) {
-        qWarning() << "File not found:" << source_path;
+        // qWarning() << "File not found:" << source_path;
         return false;
     }
 
@@ -439,7 +439,7 @@ bool QMicroz::compress_folder(const QString &source_path)
 bool QMicroz::compress_folder(const QString &source_path, const QString &zip_path)
 {
     if (!QFileInfo::exists(source_path)) {
-        qWarning() << "Folder not found:" << source_path;
+        // qWarning() << "Folder not found:" << source_path;
         return false;
     }
 
@@ -454,14 +454,14 @@ bool QMicroz::compress_list(const QStringList &paths, const QString &zip_path)
     const QString _root = QFileInfo(paths.first()).absolutePath();
     const QString _info = QStringLiteral(u"Zipping: ")
                           + (paths.size() == 1 ? paths.first() : (QString::number(paths.size()) + QStringLiteral(u" items")));
-    qDebug() << _info;
-    qDebug() << "Output:" << zip_path;
+    // qDebug() << _info;
+    // qDebug() << "Output:" << zip_path;
 
     // check if all paths are in the same root
     if (paths.size() > 1) {
         for (const QString &_path : paths) {
             if (_root != QFileInfo(_path).absolutePath()) {
-                qWarning() << "ERROR: all items must be in the same folder!";
+                // qWarning() << "ERROR: all items must be in the same folder!";
                 return false;
             }
         }
@@ -473,7 +473,7 @@ bool QMicroz::compress_list(const QStringList &paths, const QString &zip_path)
     for (const QString &_path : paths) {
         QFileInfo __fi(_path);
         if (!__fi.exists() || __fi.isSymLink()) {
-            qWarning() << "Skipped:" << _path;
+            // qWarning() << "Skipped:" << _path;
             continue;
         }
 
@@ -488,10 +488,10 @@ bool QMicroz::compress_list(const QStringList &paths, const QString &zip_path)
 
 bool QMicroz::compress_buf(const BufList &buf_data, const QString &zip_path)
 {
-    qDebug() << "Zipping buffered data to:" << zip_path;
+    // qDebug() << "Zipping buffered data to:" << zip_path;
 
     if (buf_data.isEmpty()) {
-        qDebug() << "No input data. Nothing to zip.";
+        // qDebug() << "No input data. Nothing to zip.";
         return false;
     }
 
@@ -513,7 +513,7 @@ bool QMicroz::compress_buf(const BufList &buf_data, const QString &zip_path)
     // cleanup
     mz_zip_writer_finalize_archive(__za);
     tools::za_close(__za);
-    qDebug() << "Done";
+    // qDebug() << "Done";
     return true;
 }
 
@@ -545,6 +545,6 @@ int QMicroz::findIndex(const QString &file_name) const
         }
     }
 
-    qDebug() << "Index not found:" << file_name;
+    // qDebug() << "Index not found:" << file_name;
     return -1;
 }

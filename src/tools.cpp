@@ -21,7 +21,7 @@ mz_zip_archive* za_new(const QString &zip_path, ZaType za_type)
                           : mz_zip_reader_init_file(_za, zip_path.toUtf8().constData(), 0);
 
     if (!result) {
-        qWarning() << "Failed to open zip file:" << zip_path;
+        // qWarning() << "Failed to open zip file:" << zip_path;
         delete _za;
         return nullptr;
     }
@@ -36,7 +36,7 @@ mz_zip_archive_file_stat za_file_stat(mz_zip_archive* pZip, int file_index)
         return file_stat;
     }
 
-    qWarning() << "Failed to get file info:" << file_index;
+    // qWarning() << "Failed to get file info:" << file_index;
     return mz_zip_archive_file_stat();
 }
 
@@ -44,11 +44,11 @@ bool za_close(mz_zip_archive* pZip)
 {
     if (pZip && mz_zip_end(pZip)) {
         delete pZip;
-        qDebug() << "Archive closed";
+        // qDebug() << "Archive closed";
         return true;
     }
 
-    qWarning() << "Failed to close archive";
+    // qWarning() << "Failed to close archive";
     return false;
 }
 
@@ -60,7 +60,7 @@ QString za_item_name(mz_zip_archive* pZip, int file_index)
 bool createArchive(const QString &zip_path, const QStringList &item_paths, const QString &zip_root)
 {
     if (item_paths.isEmpty()) {
-        qDebug() << "No input paths. Nothing to zip.";
+        // qDebug() << "No input paths. Nothing to zip.";
         return false;
     }
 
@@ -75,7 +75,7 @@ bool createArchive(const QString &zip_path, const QStringList &item_paths, const
 
     if (_res) {
         mz_zip_writer_finalize_archive(_za);
-        qDebug() << "Done";
+        // qDebug() << "Done";
     }
 
     // cleanup
@@ -86,7 +86,7 @@ bool createArchive(const QString &zip_path, const QStringList &item_paths, const
 
 bool add_item_data(mz_zip_archive *p_zip, const QString &_item_path, const QByteArray &_data)
 {
-    qDebug() << "Adding:" << _item_path;
+    // qDebug() << "Adding:" << _item_path;
 
     if (!mz_zip_writer_add_mem(p_zip,
                                _item_path.toUtf8().constData(),
@@ -94,7 +94,7 @@ bool add_item_data(mz_zip_archive *p_zip, const QString &_item_path, const QByte
                                _data.size(),
                                compressLevel(_data.size())))
     {
-        qWarning() << "Failed to compress file:" << _item_path;
+        // qWarning() << "Failed to compress file:" << _item_path;
         return false;
     }
 
@@ -110,7 +110,7 @@ bool add_item_folder(mz_zip_archive *p_zip, const QString &in_path)
 
 bool add_item_file(mz_zip_archive *p_zip, const QString &fs_path, const QString &in_path)
 {
-    qDebug() << "Adding:" << in_path;
+    // qDebug() << "Adding:" << in_path;
     return mz_zip_writer_add_file(p_zip,                            // zip archive
                                   in_path.toUtf8().constData(),     // path inside the zip
                                   fs_path.toUtf8().constData(),     // filesystem path
@@ -149,7 +149,7 @@ bool extract_to_file(mz_zip_archive* pZip, int file_index, const QString &outpat
         return true;
     }
 
-    qWarning() << "Failed to extract file:" << file_index;
+    // qWarning() << "Failed to extract file:" << file_index;
     return false;
 }
 
@@ -174,32 +174,32 @@ QByteArray extract_to_buffer(mz_zip_archive* pZip, int file_index, bool copy_dat
         return QByteArray::fromRawData(_c, __size);
     }
 
-    qWarning() << "Failed to extract file:" << file_index;
+    // qWarning() << "Failed to extract file:" << file_index;
     return QByteArray();
 }
 
 bool extract_all_to_disk(mz_zip_archive *pZip, const QString &output_folder)
 {
     if (output_folder.isEmpty()) {
-        qDebug() << "No output folder provided";
+        // qDebug() << "No output folder provided";
         return false;
     }
 
     const int _num_items = mz_zip_reader_get_num_files(pZip);
 
     if (_num_items == 0) {
-        qDebug() << "No files to extract";
+        // qDebug() << "No files to extract";
         return false;
     }
 
-    qDebug() << "Extracting" << _num_items << "items to:" << output_folder;
+    // qDebug() << "Extracting" << _num_items << "items to:" << output_folder;
 
     // extracting...
     bool is_success = true;
     for (int it = 0; it < _num_items; ++it) {
         const QString _filename = za_item_name(pZip, it);
 
-        qDebug() << "Extracting:" << (it + 1) << '/' << _num_items << _filename;
+        // qDebug() << "Extracting:" << (it + 1) << '/' << _num_items << _filename;
 
         const QString _outpath = joinPath(output_folder, _filename);
 
@@ -221,7 +221,7 @@ bool extract_all_to_disk(mz_zip_archive *pZip, const QString &output_folder)
         }
     }
 
-    qDebug() << (is_success ? "Unzip complete." : "Unzip failed.");
+    // qDebug() << (is_success ? "Unzip complete." : "Unzip failed.");
     return is_success;
 }
 
@@ -251,7 +251,7 @@ bool createFolder(const QString &path)
         return true;
     }
 
-    qWarning() << "Failed to create directory:" << path;
+    // qWarning() << "Failed to create directory:" << path;
     return false;
 }
 
